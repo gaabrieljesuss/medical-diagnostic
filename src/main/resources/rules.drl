@@ -1,0 +1,100 @@
+import com.medical.diagnostic.models.Symptom
+import com.medical.diagnostic.models.MedicalHistory
+import com.medical.diagnostic.models.Disease
+import java.util.List;
+global List<Disease> diseases;
+
+dialect "mvel"
+
+rule "Flu Diagnosis"
+    when
+        $symptom : Symptom(name.toLowerCase() == "fever", severity > 2)
+        $symptom2 : Symptom(name.toLowerCase() == "cough", severity > 2)
+        $history : MedicalHistory(hasChronicDisease == false)
+    then
+        Disease disease = new Disease();
+        disease.setName("Flu");
+        disease.setDiagnosis("You may have the Flu. Consider seeing a doctor.");
+        diseases.add(disease);
+end
+
+rule "COVID-19 Diagnosis"
+    when
+        $symptom : Symptom(name.toLowerCase() == "fever", severity > 3)
+        $symptom2 : Symptom(name.toLowerCase() == "dry cough", severity > 3)
+        $symptom3 : Symptom(name.toLowerCase() == "loss of smell", severity > 0)
+    then
+        Disease disease = new Disease();
+        disease.setName("COVID-19");
+        disease.setDiagnosis("You may have COVID-19. Please get tested immediately.");
+        diseases.add(disease);
+end
+
+rule "Migraine Diagnosis"
+    when
+        $symptom : Symptom(name.toLowerCase() == "headache", severity > 4)
+        $symptom2 : Symptom(name.toLowerCase() == "sensitivity to light", severity > 2)
+    then
+        Disease disease = new Disease();
+        disease.setName("Migraine");
+        disease.setDiagnosis("You may have a migraine. Consider taking appropriate medication and resting.");
+        diseases.add(disease);
+end
+
+rule "Chronic Disease Warning"
+    when
+        $history : MedicalHistory(hasChronicDisease == true)
+    then
+        Disease disease = new Disease();
+        disease.setName("Chronic Disease Risk");
+        disease.setDiagnosis("You are at higher risk for chronic diseases.");
+        diseases.add(disease);
+end
+
+rule "Diabetes Warning"
+    when
+        $symptom : Symptom(name.toLowerCase() == "excessive thirst", severity > 3)
+        $symptom2 : Symptom(name.toLowerCase() == "frequent urination", severity > 3)
+        $history : MedicalHistory(hasFamilyHistory == true)
+    then
+        Disease disease = new Disease();
+        disease.setName("Diabetes Risk");
+        disease.setDiagnosis("You are showing symptoms of diabetes. Please consult a healthcare provider.");
+        diseases.add(disease);
+end
+
+rule "Pneumonia Diagnosis"
+    when
+        $symptom1 : Symptom(name.toLowerCase() == "chest pain", severity > 3)
+        $symptom2 : Symptom(name.toLowerCase() == "difficulty breathing", severity > 3)
+        $history : MedicalHistory(hasChronicDisease == false)
+    then
+        Disease disease = new Disease();
+        disease.setName("Pneumonia");
+        disease.setDiagnosis("You may have Pneumonia. Seek medical attention promptly.");
+        diseases.add(disease);
+end
+
+rule "Asthma Diagnosis"
+    when
+        $symptom : Symptom(name.toLowerCase() == "wheezing", severity > 2)
+        $symptom2 : Symptom(name.toLowerCase() == "shortness of breath", severity > 2)
+        $history : MedicalHistory(smokingHistory == true)
+    then
+        Disease disease = new Disease();
+        disease.setName("Asthma");
+        disease.setDiagnosis("You may have asthma. Consider seeing a doctor for a proper diagnosis.");
+        diseases.add(disease);
+end
+
+rule "Hypertension Diagnosis"
+    when
+        $symptom : Symptom(name.toLowerCase() == "headache", severity > 3)
+        $symptom2 : Symptom(name.toLowerCase() == "dizziness", severity > 2)
+        $history : MedicalHistory(highBloodPressure == true)
+    then
+        Disease disease = new Disease();
+        disease.setName("Hypertension");
+        disease.setDiagnosis("You may have hypertension. Please consult a healthcare provider.");
+        diseases.add(disease);
+end
